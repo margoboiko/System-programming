@@ -9,6 +9,7 @@ namespace Replace
 {
     class RegularCheck
     {
+        // регулярний вираз шукає задану маску в тексті з яким ми працюємо
         public string replaceMask(string mask)
         {
             Regex rgx = new Regex(mask);
