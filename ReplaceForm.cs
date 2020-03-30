@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,6 +22,7 @@ namespace Replace
             
         }
 
+        // ініціалізація тексту з яким працюємо
         public ReplaceForm(RichTextBox richTextBox)
         {
            
@@ -29,45 +30,38 @@ namespace Replace
             InitializeComponent();
         }
 
-        
-        private void txtSearch_TextChanged(object sender, EventArgs e)
-        {
-
-            bool isEmpty = txtSearch.Text.Length == 0;
-
-            btnReplace.Enabled = !isEmpty;
-            btnReplaceAll.Enabled = !isEmpty;
-
-        }
-
         private void btnReplace_Click_1(object sender, EventArgs e)
         {
-            MessageBox.Show(txtSearch.Text);
-
+            // використовуємо регулярний вираз для заданої в полі пошуку маски
             Regex mask = new Regex(txtSearch.Text);
 
-
+            // якщо заміна відбувається починаючи з початку
             if (btnStart.Checked)
             {
+                // здійснюється перевірка співпадінь маски в тексті
+                // якщо співпадінь немає
                 var matches = Regex.Matches(__txtContent.Text, @"\b" + mask + @"\s*\b");
                 if (matches.Count == 0)
                 {
-                    MessageBox.Show("No matches!");
+                    MessageBox.Show("Немає співпадінь!");
                     return;
                 }
 
+                // якщо співпадіння є
                 int i = 0;
                 int k = 0;
                 foreach (Match m in matches)
                 {
+                    // коли знайшли перше співпадіння воно виділяється і відкривається діалогове вікно запиту
                     __txtContent.Select(m.Index + i, m.Length);
-                    __txtContent.SelectionBackColor = Color.DeepSkyBlue;
-                    string message = "Replace '" + m.ToString() + "'" + "?";
+                    __txtContent.SelectionBackColor = Color.LightSalmon;
+                    string message = "Ви впевнені що хочете замінити '" + m.ToString() + "'" + "?";
 
-                    var result = MessageBox.Show(message, "Waring!",
+                    var result = MessageBox.Show(message, "Увага!",
                                      MessageBoxButtons.YesNo,
                                      MessageBoxIcon.Question);
 
+                    // якщо ми згодні замінити підходяще слово - заміняємо
                     if (result == DialogResult.Yes)
                     {
                         if (m.Length > txtReplace.Text.Length)
@@ -82,6 +76,7 @@ namespace Replace
                         __txtContent.SelectionBackColor = Color.White;
                     }
 
+                    // якщо відхилити заміну
                     if (result == DialogResult.No)
                     {
                         __txtContent.SelectionBackColor = Color.White;
@@ -92,21 +87,26 @@ namespace Replace
 
             if (btnCursor.Checked)
             {
+                // використовуємо регулярний вираз для пошуку співпадінь з місця, де знаходиться курсор
                 Regex r = new Regex(@"\b" + mask + @"\s*\b");
+
+                // співпадінь немає
                 if (r.Matches(__txtContent.Text, __txtContent.SelectionStart).Count == 0)
                 {
                     MessageBox.Show("No matches!");
                     return;
                 }
+
+                // співпадіння є
                 var matches = r.Matches(__txtContent.Text, __txtContent.SelectionStart);
                 int i = 0;
                 foreach (Match m in matches)
                 {
                     __txtContent.Select(m.Index + i, m.Length);
-                    __txtContent.SelectionBackColor = Color.Violet;
-                    string message = "Replace '" + m.ToString() + "'" + "?";
+                    __txtContent.SelectionBackColor = Color.Orange;
+                    string message = "Ви впевнені що хочете замінити '" + m.ToString() + "'" + "?";
 
-                    var result = MessageBox.Show(message, "Waring!",
+                    var result = MessageBox.Show(message, "Увага!",
                                      MessageBoxButtons.YesNo,
                                      MessageBoxIcon.Question);
 
@@ -132,16 +132,19 @@ namespace Replace
 
         private void btnReplaceAll_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(txtSearch.Text); //
-
+            // використовуємо регулярний вираз для заданої в полі пошуку маски
             Regex mask = new Regex(txtSearch.Text);
+
+            // здійснюється перевірка співпадінь маски в тексті
+            // якщо співпадінь немає
             var matches = Regex.Matches(__txtContent.Text, @"\b" + mask + @"\s*\b");
             if (matches.Count == 0)
             {
-                MessageBox.Show("Немає співпадінь");
+                MessageBox.Show("Немає співпадінь!");
                 return;
             }
 
+            // якщо співпадіння є
             int i = 0;
             foreach (Match m in matches)
             {
@@ -149,9 +152,9 @@ namespace Replace
                 __txtContent.SelectionBackColor = Color.Red;
 
             }
-            string message = "Replace all?";
+            string message = "Замінити все?";
 
-            var result = MessageBox.Show(message, "Waring!",
+            var result = MessageBox.Show(message, "Увага!",
                              MessageBoxButtons.YesNo,
                              MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
@@ -165,12 +168,13 @@ namespace Replace
                 __txtContent.SelectionBackColor = Color.White;
             }
         }
-        
-                private void btnClose_Click(object sender, EventArgs e)
+
+        // натискаючи на "Закрити" згортаємо форму заміни
+        private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
         }
-
     }
+
  
 }
