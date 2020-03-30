@@ -40,12 +40,6 @@ namespace Replace
 
         }
 
-        
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
         private void btnReplace_Click_1(object sender, EventArgs e)
         {
             MessageBox.Show(txtSearch.Text);
@@ -171,6 +165,12 @@ namespace Replace
                 __txtContent.SelectionBackColor = Color.White;
             }
         }
+        
+                private void btnClose_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
     }
  
 }
